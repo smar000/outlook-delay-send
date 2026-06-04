@@ -6,10 +6,7 @@ An Office.js add-in for New Outlook (Windows) that automatically applies a confi
 
 When you click Send, the `OnMessageSend` event fires and the add-in schedules delivery for a future time using `item.delayDeliveryTime.setAsync()`. Exchange holds the message server-side until that time.
 
-A **"Delay Send"** group appears in the compose ribbon with two buttons:
-
-- **Send Now** — flags the current email to bypass the delay. Click this, then click Send, and the message goes immediately without any hold.
-- **Settings** — opens a task pane where you can change the delay duration (default: 120 seconds).
+Settings and the Send Now bypass are accessible via a task pane, opened from the **More Apps** button in the compose or reading ribbon.
 
 ## Setup
 
@@ -44,16 +41,22 @@ The add-in will then appear in both Outlook on the Web and New Outlook on Window
 ### Automatic delay (default behaviour)
 Just compose and send as normal. Every email is automatically held for the configured delay period before delivery. During the hold window, the message appears in **Drafts** — you can open and delete it there to cancel the send.
 
-### Send Now (bypass the delay)
-To send a specific email immediately without any delay:
-1. In the compose window, click **Send Now** in the Delay Send ribbon group
-2. A blue notification bar confirms: *"Send Now active — click Send to bypass the delay."*
-3. Click the regular **Send** button — the message sends immediately
+### Opening the settings panel
+The task pane is accessed via the **More Apps** button in the ribbon (compose or reading view):
+
+1. Click **More Apps** in the ribbon
+2. Click **Delay Send** in the popup
+3. The settings panel opens on the right side of the window
+
+### Send Now (bypass the delay for one email)
+1. Open the settings panel (see above)
+2. Toggle **Send Next Email Immediately** on
+3. Close the panel and click **Send** — the message sends without any delay
 
 The bypass applies to that email only and resets automatically after sending.
 
 ### Changing the delay duration
-1. In any compose window, click **Settings** in the Delay Send ribbon group
+1. Open the settings panel (see above)
 2. Enter your preferred delay in seconds (e.g. 300 for 5 minutes)
 3. Click **Save**
 
@@ -88,5 +91,5 @@ Commit and push — GitHub Pages updates within ~1 minute. No manifest change ne
 | Exchange/M365 only | Won't apply to IMAP/POP3 accounts added to Outlook |
 | Minimum Mailbox 1.13 | Requires a recent version of New Outlook (mid-2023+) |
 | SoftBlock behaviour | If GitHub Pages is unreachable at send time, Outlook warns the user but allows them to override and send immediately |
-| Send Now is two clicks | The ribbon button sets the bypass flag; the user still clicks the regular Send button to trigger the send |
+| Ribbon button | For sideloaded add-ins in New Outlook, the task pane is accessed via More Apps rather than a dedicated ribbon button |
 | No automatic Drafts UI | To cancel a queued message, go to Drafts manually and delete it |
