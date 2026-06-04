@@ -43,13 +43,11 @@ Office.onReady(() => {
     });
   });
 
-  // Enable Save only when delay value changes
+  // Show Save only when delay value changes
   delayInput.addEventListener('input', () => {
     const changed = parseInt(delayInput.value, 10) !== savedDelay;
-    saveBtn.disabled = !changed;
-    if (saveStatus.textContent) {
-      saveStatus.textContent = '';
-    }
+    saveBtn.style.display = changed ? 'inline-block' : 'none';
+    if (!changed) saveStatus.textContent = '';
   });
 
   // Save delay
@@ -69,8 +67,7 @@ Office.onReady(() => {
         const mins = (val / 60).toFixed(1).replace(/\.0$/, '');
         saveStatus.textContent = `Saved — delay set to ${val}s (${mins} min).`;
         saveStatus.style.color = '#107c10';
-        saveBtn.disabled = true;
-        // Update reference value so further edits are compared correctly
+        saveBtn.style.display = 'none';
         delayInput.dataset.saved = val;
       }
     });
@@ -80,6 +77,6 @@ Office.onReady(() => {
     sendNowToggle.disabled = !enabled;
     sendNowLabel.classList.toggle('disabled-label', !enabled);
     delayInput.disabled = !enabled;
-    saveBtn.disabled = !enabled || parseInt(delayInput.value, 10) === (parseInt(delayInput.dataset.saved, 10) || savedDelay);
+    if (!enabled) saveBtn.style.display = 'none';
   }
 });
