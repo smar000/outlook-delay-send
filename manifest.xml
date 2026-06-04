@@ -2,61 +2,132 @@
 <OfficeApp
   xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
   xsi:type="MailApp">
 
   <Id>dfb35a1c-13ea-451d-a912-356632a6361a</Id>
-  <Version>1.0.0</Version>
+  <Version>1.1.0</Version>
   <ProviderName>Personal</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Delay Send" />
-  <Description DefaultValue="Automatically delays all outbound emails by 120 seconds." />
+  <Description DefaultValue="Automatically delays all outbound emails, with a Send Now override." />
+  <IconUrl DefaultValue="https://smar000.github.io/outlook-delay-send/assets/icon-32.png" />
+  <HighResolutionIconUrl DefaultValue="https://smar000.github.io/outlook-delay-send/assets/icon-64.png" />
+  <SupportUrl DefaultValue="https://github.com/smar000/outlook-delay-send" />
 
-  <Requirements>
-    <Sets>
-      <Set Name="Mailbox" MinVersion="1.13" />
-    </Sets>
-  </Requirements>
+  <AppDomains>
+    <AppDomain>https://smar000.github.io</AppDomain>
+  </AppDomains>
 
   <Hosts>
     <Host Name="Mailbox" />
   </Hosts>
 
-  <DesktopSettings>
-    <SourceLocation DefaultValue="https://smar000.github.io/outlook-delay-send/src/commands.html" />
-    <RequestedHeight>0</RequestedHeight>
-  </DesktopSettings>
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.1" />
+    </Sets>
+  </Requirements>
+
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://smar000.github.io/outlook-delay-send/src/taskpane.html" />
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+
+  <Permissions>ReadWriteMailbox</Permissions>
+
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read" />
+  </Rule>
+
+  <DisableEntityHighlighting>false</DisableEntityHighlighting>
 
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides"
                     xsi:type="VersionOverridesV1_0">
-    <Requirements>
-      <bt:Sets>
-        <bt:Set Name="Mailbox" MinVersion="1.13" />
-      </bt:Sets>
-    </Requirements>
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1"
+                      xsi:type="VersionOverridesV1_1">
 
-    <Hosts>
-      <Host xsi:type="MailHost">
-        <DesktopFormFactor>
-          <FunctionFile resid="Commands.Url" />
+      <Requirements>
+        <bt:Sets DefaultMinVersion="1.13">
+          <bt:Set Name="Mailbox" />
+        </bt:Sets>
+      </Requirements>
 
-          <ExtensionPoint xsi:type="LaunchEvent">
-            <LaunchEvents>
-              <LaunchEvent Type="OnMessageSend" FunctionName="onMessageSendHandler"
-                           SendMode="softBlock" />
-            </LaunchEvents>
-            <SourceLocation resid="Commands.Url" />
-          </ExtensionPoint>
+      <Hosts>
+        <Host xsi:type="MailHost">
 
-        </DesktopFormFactor>
-      </Host>
-    </Hosts>
+          <Runtimes>
+            <Runtime resid="WebViewRuntime.Url">
+              <Override type="javascript" resid="JSRuntime.Url" />
+            </Runtime>
+          </Runtimes>
 
-    <Resources>
-      <bt:Urls>
-        <bt:Url id="Commands.Url"
-                DefaultValue="https://smar000.github.io/outlook-delay-send/src/commands.html" />
-      </bt:Urls>
-    </Resources>
+          <DesktopFormFactor>
 
+            <FunctionFile resid="Commands.Url" />
+
+            <ExtensionPoint xsi:type="MessageReadCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="DelaySendGroup">
+                  <Label resid="GroupLabel" />
+
+                  <Control xsi:type="Button" id="SettingsButton">
+                    <Label resid="SettingsLabel" />
+                    <Supertip>
+                      <Title resid="SettingsLabel" />
+                      <Description resid="SettingsDesc" />
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="ClockIcon.16" />
+                      <bt:Image size="32" resid="ClockIcon.32" />
+                      <bt:Image size="80" resid="ClockIcon.80" />
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="Taskpane.Url" />
+                    </Action>
+                  </Control>
+
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+
+            <ExtensionPoint xsi:type="LaunchEvent">
+              <LaunchEvents>
+                <LaunchEvent Type="OnMessageSend" FunctionName="onMessageSendHandler"
+                             SendMode="SoftBlock" />
+              </LaunchEvents>
+              <SourceLocation resid="WebViewRuntime.Url" />
+            </ExtensionPoint>
+
+          </DesktopFormFactor>
+        </Host>
+      </Hosts>
+
+      <Resources>
+        <bt:Images>
+          <bt:Image id="ClockIcon.16" DefaultValue="https://smar000.github.io/outlook-delay-send/assets/icon-16.png" />
+          <bt:Image id="ClockIcon.32" DefaultValue="https://smar000.github.io/outlook-delay-send/assets/icon-32.png" />
+          <bt:Image id="ClockIcon.80" DefaultValue="https://smar000.github.io/outlook-delay-send/assets/icon-80.png" />
+        </bt:Images>
+        <bt:Urls>
+          <bt:Url id="Commands.Url" DefaultValue="https://smar000.github.io/outlook-delay-send/src/commands.html" />
+          <bt:Url id="JSRuntime.Url" DefaultValue="https://smar000.github.io/outlook-delay-send/src/commands.js" />
+          <bt:Url id="WebViewRuntime.Url" DefaultValue="https://smar000.github.io/outlook-delay-send/src/commands.html" />
+          <bt:Url id="Taskpane.Url" DefaultValue="https://smar000.github.io/outlook-delay-send/src/taskpane.html" />
+        </bt:Urls>
+        <bt:ShortStrings>
+          <bt:String id="GroupLabel" DefaultValue="Delay Send" />
+          <bt:String id="SettingsLabel" DefaultValue="Delay Send" />
+        </bt:ShortStrings>
+        <bt:LongStrings>
+          <bt:String id="SettingsDesc" DefaultValue="Configure the send delay and toggle Send Now bypass." />
+        </bt:LongStrings>
+      </Resources>
+
+    </VersionOverrides>
   </VersionOverrides>
 </OfficeApp>
