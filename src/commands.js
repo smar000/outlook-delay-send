@@ -3,7 +3,8 @@ Office.onReady(() => {});
 function onMessageSendHandler(event) {
   const settings = Office.context.roamingSettings;
 
-  if (settings.get('sendImmediately')) {
+  // Disabled or Send Now bypass — send immediately
+  if (settings.get('delaySendEnabled') === false || settings.get('sendImmediately')) {
     settings.set('sendImmediately', false);
     settings.saveAsync(() => {
       event.completed({ allowEvent: true });

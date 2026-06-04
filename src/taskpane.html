@@ -20,37 +20,28 @@
       margin: 0 0 20px;
     }
     section {
-      margin-bottom: 24px;
-      padding-bottom: 24px;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
       border-bottom: 1px solid #edebe9;
     }
     section:last-of-type { border-bottom: none; }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 500;
-    }
-    .hint {
-      font-size: 12px;
-      color: #605e5c;
-      margin-bottom: 10px;
-    }
-    input[type="number"] {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 6px 8px;
-      font-size: 14px;
-      border: 1px solid #8a8886;
-      border-radius: 2px;
-      margin-bottom: 14px;
-    }
     .toggle-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .toggle-label { font-weight: 500; }
+    .hint {
+      font-size: 12px;
+      color: #605e5c;
+      margin-bottom: 6px;
+    }
+    .auto-save-note {
+      font-size: 11px;
+      color: #8a8886;
+      font-style: italic;
+    }
     .toggle {
       position: relative;
       width: 44px;
@@ -79,6 +70,32 @@
     }
     .toggle input:checked + .toggle-slider { background: #0078d4; }
     .toggle input:checked + .toggle-slider:before { transform: translateX(20px); }
+    .toggle input:disabled + .toggle-slider { opacity: 0.4; cursor: not-allowed; }
+    label.disabled-label { opacity: 0.4; }
+    .status {
+      font-size: 12px;
+      min-height: 16px;
+      margin-top: 4px;
+    }
+    label[for="delay-seconds"] {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input[type="number"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px 8px;
+      font-size: 14px;
+      border: 1px solid #8a8886;
+      border-radius: 2px;
+      margin-bottom: 10px;
+    }
+    input[type="number"]:disabled {
+      background: #f3f2f1;
+      color: #a19f9d;
+      cursor: not-allowed;
+    }
     button {
       background: #0078d4;
       color: #fff;
@@ -88,11 +105,10 @@
       border-radius: 2px;
       cursor: pointer;
     }
-    button:hover { background: #106ebe; }
-    .status {
-      margin-top: 10px;
-      font-size: 13px;
-      min-height: 18px;
+    button:hover:not(:disabled) { background: #106ebe; }
+    button:disabled {
+      background: #c8c6c4;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -101,13 +117,27 @@
 
   <section>
     <div class="toggle-row">
-      <span class="toggle-label">Send Next Email Immediately</span>
+      <span class="toggle-label">Delay Send enabled</span>
+      <label class="toggle">
+        <input type="checkbox" id="enabled-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="hint">When off, all emails send immediately with no delay.</div>
+    <div class="auto-save-note">Saves automatically.</div>
+    <div class="status" id="enabled-status"></div>
+  </section>
+
+  <section>
+    <div class="toggle-row">
+      <span class="toggle-label" id="send-now-label">Send Next Email Immediately</span>
       <label class="toggle">
         <input type="checkbox" id="send-now-toggle" />
         <span class="toggle-slider"></span>
       </label>
     </div>
-    <div class="hint">When on, the next email you send will bypass the delay. Resets automatically after sending.</div>
+    <div class="hint">When on, the next email bypasses the delay. Resets automatically after sending.</div>
+    <div class="auto-save-note">Saves automatically.</div>
     <div class="status" id="toggle-status"></div>
   </section>
 
@@ -115,7 +145,7 @@
     <label for="delay-seconds">Delay duration (seconds)</label>
     <div class="hint">Default is 120 seconds (2 minutes). Minimum is 1 second.</div>
     <input type="number" id="delay-seconds" min="1" step="1" />
-    <button id="save-btn">Save</button>
+    <button id="save-btn" disabled>Save</button>
     <div class="status" id="save-status"></div>
   </section>
 

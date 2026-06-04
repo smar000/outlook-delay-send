@@ -1,27 +1,58 @@
 Office.onReady(() => {
   const settings = Office.context.roamingSettings;
-  const toggle = document.getElementById('send-now-toggle');
+
+  const enabledToggle = document.getElementById('enabled-toggle');
+  const enabledStatus = document.getElementById('enabled-status');
+  const sendNowToggle = document.getElementById('send-now-toggle');
+  const sendNowLabel = document.getElementById('send-now-label');
   const toggleStatus = document.getElementById('toggle-status');
   const delayInput = document.getElementById('delay-seconds');
   const saveBtn = document.getElementById('save-btn');
   const saveStatus = document.getElementById('save-status');
 
-  // Load current values
-  toggle.checked = !!settings.get('sendImmediately');
-  delayInput.value = settings.get('delaySeconds') || 120;
+  // Load saved values (default enabled = true)
+  const isEnabled = settings.get('delaySendEnabled') !== false;
+  const savedDelay = settings.get('delaySeconds') || 120;
 
-  // Send Now toggle
-  toggle.addEventListener('change', () => {
-    settings.set('sendImmediately', toggle.checked);
+  enabledToggle.checked = isEnabled;
+  sendNowToggle.checked = !!settings.get('sendImmediately');
+  delayInput.value = savedDelay;
+
+  applyEnabledState(isEnabled);
+
+  // Master enable/disable toggle
+  enabledToggle.addEventListener('change', () => {
+    settings.set('delaySendEnabled', enabledToggle.checked);
     settings.saveAsync(() => {
-      toggleStatus.textContent = toggle.checked
-        ? 'Active — next send will bypass the delay.'
-        : 'Off — delay will apply normally.';
-      toggleStatus.style.color = toggle.checked ? '#107c10' : '#605e5c';
+      enabledStatus.textContent = enabledToggle.checked
+        ? 'Delay Send is active.'
+        : 'Delay Send is disabled — emails will send immediately.';
+      enabledStatus.style.color = enabledToggle.checked ? '#107c10' : '#605e5c';
+      applyEnabledState(enabledToggle.checked);
     });
   });
 
-  // Delay save
+  // Send Now toggle
+  sendNowToggle.addEventListener('change', () => {
+    settings.set('sendImmediately', sendNowToggle.checked);
+    settings.saveAsync(() => {
+      toggleStatus.textContent = sendNowToggle.checked
+        ? 'Active — next send will bypass the delay.'
+        : 'Off — delay will apply normally.';
+      toggleStatus.style.color = sendNowToggle.checked ? '#107c10' : '#605e5c';
+    });
+  });
+
+  // Enable Save only when delay value changes
+  delayInput.addEventListener('input', () => {
+    const changed = parseInt(delayInput.value, 10) !== savedDelay;
+    saveBtn.disabled = !changed;
+    if (saveStatus.textContent) {
+      saveStatus.textContent = '';
+    }
+  });
+
+  // Save delay
   saveBtn.addEventListener('click', () => {
     const val = parseInt(delayInput.value, 10);
     if (isNaN(val) || val < 1) {
@@ -38,7 +69,17 @@ Office.onReady(() => {
         const mins = (val / 60).toFixed(1).replace(/\.0$/, '');
         saveStatus.textContent = `Saved — delay set to ${val}s (${mins} min).`;
         saveStatus.style.color = '#107c10';
+        saveBtn.disabled = true;
+        // Update reference value so further edits are compared correctly
+        delayInput.dataset.saved = val;
       }
     });
   });
+
+  function applyEnabledState(enabled) {
+    sendNowToggle.disabled = !enabled;
+    sendNowLabel.classList.toggle('disabled-label', !enabled);
+    delayInput.disabled = !enabled;
+    saveBtn.disabled = !enabled || parseInt(delayInput.value, 10) === (parseInt(delayInput.dataset.saved, 10) || savedDelay);
+  }
 });
