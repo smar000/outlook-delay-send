@@ -42,11 +42,12 @@ The add-in will then appear in both Outlook on the Web and New Outlook on Window
 Just compose and send as normal. Every email is automatically held for the configured delay period before delivery. During the hold window, the message appears in **Drafts** — you can open and delete it there to cancel the send.
 
 ### Opening the settings panel
-The task pane is accessed via the **More Apps** button in the ribbon (compose or reading view):
+The task pane is accessed via the **More Apps** button in the compose ribbon:
 
-1. Click **More Apps** in the ribbon
-2. Click **Delay Send** in the popup
-3. The settings panel opens on the right side of the window
+1. Open a new message
+2. Click **More Apps** in the ribbon
+3. Click **Delay Send** in the popup
+4. The settings panel opens on the right side of the window
 
 ### Send Now (bypass the delay for one email)
 1. Open the settings panel (see above)
