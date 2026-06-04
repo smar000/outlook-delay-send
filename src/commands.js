@@ -5,8 +5,9 @@ function onMessageSendHandler(event) {
 
   if (settings.get('sendImmediately')) {
     settings.set('sendImmediately', false);
-    settings.saveAsync();
-    event.completed({ allowEvent: true });
+    settings.saveAsync(() => {
+      event.completed({ allowEvent: true });
+    });
     return;
   }
 
